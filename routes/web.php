@@ -19,7 +19,9 @@ Route::get('/', function () {
 
 // User authentication routes
 Route::get('/login', function () {
-    return Inertia::render('Auth/Login');
+    return Inertia::render('Auth/Login', [
+        'recaptchaSiteKey' => env('RECAPTCHA_SITE_KEY', '')
+    ]);
 })->name('login');
 
 Route::post('/login', [AuthenticatedSessionController::class, 'store']);
