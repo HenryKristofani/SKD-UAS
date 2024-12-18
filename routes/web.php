@@ -147,13 +147,21 @@ Route::put('/api/users/{id}/block', [AdminController::class, 'blockUser']);
 
 Route::put('/api/users/{id}/unblock', [AdminController::class, 'unblockUser']);
 
-
-
-
-
-
 Route::get('/login', function () {
     return Inertia::render('Auth/Login', [
         'recaptchaSiteKey' => env('RECAPTCHA_SITE_KEY')
     ]);
 });
+
+
+
+
+
+
+
+// In web.php
+Route::get('/otp/verify', [RegisteredUserController::class, 'showOTPVerification'])
+    ->name('otp.verify');
+
+Route::post('/otp/verify', [RegisteredUserController::class, 'verifyOTP'])
+    ->name('otp.verify.submit');
