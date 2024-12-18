@@ -24,6 +24,13 @@
               List User
             </a>
           </li>
+
+
+
+
+
+
+
           <li>
             <a href="#" @click="logout" 
                class="block py-2 px-4 mt-6 bg-red-600 hover:bg-red-500 rounded">
@@ -58,11 +65,13 @@
             <td class="py-2 px-4 border-b border-r">{{ reservasi.telepon_ketua }}</td>
             <td class="py-2 px-4 border-b border-r">{{ formatDate(reservasi.tanggal_reservasi) }}</td>
             <td class="py-2 px-4 border-b border-r">
+
               <img v-if="reservasi.bukti_pembayaran" 
                    :src="`/storage/${reservasi.bukti_pembayaran}`" 
                    alt="Bukti Pembayaran" 
                    class="w-16 h-16 cursor-pointer"
                    @click="viewImage(`/storage/${reservasi.bukti_pembayaran}`)" />
+
               <p v-else class="text-red-500">Belum Upload</p>
             </td>
             <td class="py-2 px-4 border-b flex space-x-2">
@@ -74,6 +83,7 @@
           </tr>
         </tbody>
       </table>
+
 
       <!-- Modal for displaying reservation details -->
       <div v-if="selectedReservation" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
@@ -163,6 +173,10 @@ export default {
     },
     closeImage() {
       this.selectedImage = null; // Hapus URL gambar untuk menutup modal
+
+
+
+
     },
     viewDetails(id) {
       fetch(`/reservasi/${id}`)
@@ -186,8 +200,8 @@ export default {
       Inertia.visit(`/admin/reservations/${id}/edit`);
     },
     confirmDelete(id) {
-      if (confirm("Apakah Anda yakin ingin menghapus data reservasi ini? Tindakan ini tidak dapat dibatalkan.")) {
-        this.deleteReservation(id);
+      if (confirm('Apakah Anda yakin ingin menghapus data reservasi ini? Tindakan ini tidak dapat dibatalkan.')) {
+        Inertia.delete(`/admin/reservations/${id}`);
       }
     },
     deleteReservation(id) {
