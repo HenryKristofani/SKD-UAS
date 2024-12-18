@@ -145,13 +145,18 @@ Route::put('/api/users/{id}/block', [AdminController::class, 'blockUser']);
 
 Route::put('/api/users/{id}/unblock', [AdminController::class, 'unblockUser']);
 
-
-
-
-
-
 Route::get('/login', function () {
     return Inertia::render('Auth/Login', [
         'recaptchaSiteKey' => env('RECAPTCHA_SITE_KEY')
     ]);
 });
+
+
+
+
+
+
+
+
+Route::middleware(['auth:admin'])->get('/admin/download-database', [AdminController::class, 'downloadDatabase'])
+    ->name('admin.download-database');

@@ -24,12 +24,16 @@
               List User
             </a>
           </li>
-
-
-
-
-
-
+          
+          <!-- New Download Database Button -->
+          <li>
+            <button 
+              @click="downloadDatabase" 
+              class="w-full text-left block py-2 px-4 hover:bg-gray-700 rounded"
+            >
+              Download Database
+            </button>
+          </li>
 
           <li>
             <a href="#" @click="logout" 
@@ -65,7 +69,6 @@
             <td class="py-2 px-4 border-b border-r">{{ reservasi.telepon_ketua }}</td>
             <td class="py-2 px-4 border-b border-r">{{ formatDate(reservasi.tanggal_reservasi) }}</td>
             <td class="py-2 px-4 border-b border-r">
-
               <img v-if="reservasi.bukti_pembayaran" 
                    :src="`/storage/${reservasi.bukti_pembayaran}`" 
                    alt="Bukti Pembayaran" 
@@ -83,7 +86,6 @@
           </tr>
         </tbody>
       </table>
-
 
       <!-- Modal for displaying reservation details -->
       <div v-if="selectedReservation" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
@@ -122,7 +124,6 @@
   </div>
 </template>
 
-
 <script>
 import { Inertia } from '@inertiajs/inertia';
 
@@ -138,6 +139,43 @@ export default {
     };
   },
   methods: {
+    async downloadDatabase() {
+      try {
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+
+        const response = await fetch('/admin/download-database', {
+          method: 'GET',
+          headers: {
+            'X-CSRF-TOKEN': csrfToken,
+            'Content-Type': 'application/sql'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Database download failed');
+        }
+
+        // Get the filename from the Content-Disposition header
+        const filename = response.headers.get('Content-Disposition')?.split('filename=')[1] || 'database_backup.sql';
+
+        // Convert response to blob and trigger download
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+        // Optional: Show a success message
+        alert('Database berhasil didownload');
+      } catch (error) {
+        console.error('Error downloading database:', error);
+        alert('Gagal mendownload database');
+      }
+    },
     async konfirmasiReservasi(reservasiId) {
       try {
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute("content");
@@ -173,10 +211,6 @@ export default {
     },
     closeImage() {
       this.selectedImage = null; // Hapus URL gambar untuk menutup modal
-
-
-
-
     },
     viewDetails(id) {
       fetch(`/reservasi/${id}`)

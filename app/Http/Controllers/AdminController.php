@@ -242,15 +242,6 @@ class AdminController extends Controller
         return response()->json(['jumlah_pendaki' => $jumlahPendaki]);
     }
     
-
-
-
-
-
-
-
-
-
     public function listUsers()
     {
         $users = User::all();
@@ -307,6 +298,70 @@ public function unblockUser($id)
 }
 
 
+public function downloadDatabase()
+{
+    // Ensure only admin can access this
+    if (!Auth::guard('admin')->check()) {
+        abort(403, 'Unauthorized access');
+    }
+
+    try {
+        // Use Laravel's database configuration
+        $database = env('DB_DATABASE');
+        $username = env('DB_USERNAME');
+        $password = env('DB_PASSWORD');
+        $host = env('DB_HOST', 'localhost');
+
+        // Generate a unique filename with timestamp
+        $filename = 'database_backup_' . now()->format('Y-m-d_H-i-s') . '.sql';
+        $path = storage_path('app/' . $filename);
+
+        // Construct the mysqldump command with proper escaping
+        $command = sprintf(
+            'mysqldump --host=%s --user=%s --password=%s %s > %s 2>&1',
+            escapeshellarg($host),
+            escapeshellarg($username),
+            escapeshellarg($password),
+            escapeshellarg($database),
+            escapeshellarg($path)
+        );
+
+        // Execute the command
+        $output = [];
+        $returnVar = 0;
+        exec($command, $output, $returnVar);
+
+        // Check if the command was successful
+        if ($returnVar !== 0) {
+            // Log the error
+            \Log::error('Database backup failed', [
+                'output' => $output,
+                'return' => $returnVar
+            ]);
+            
+            abort(500, 'Failed to create database backup');
+        }
+
+        // Check if file was created successfully
+        if (!file_exists($path)) {
+            abort(500, 'Backup file could not be created');
+        }
+
+        // Return the file for download
+        return response()->download($path, $filename, [
+            'Content-Type' => 'application/sql',
+        ])->deleteFileAfterSend(true);
+
+    } catch (\Exception $e) {
+        // Log the full exception
+        \Log::error('Database download error', [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        abort(500, 'An error occurred during database download');
+    }
+}
 
     
 }
