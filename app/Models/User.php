@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Tymon\JWTAuth\Contracts\JWTSubject; // Import JWTSubject
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable implements MustVerifyEmail, JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -31,6 +32,17 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
         'otp_expires_at' => 'datetime',
     ];
+
+    // JWT Implementation
+    public function getJWTIdentifier()
+    {
+        return $this->getKey(); // ID pengguna
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return []; // Anda dapat menambahkan klaim tambahan di sini
+    }
 
     // Method to generate OTP
     public function generateOTP()

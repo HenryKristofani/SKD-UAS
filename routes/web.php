@@ -160,3 +160,11 @@ Route::get('/login', function () {
 
 Route::middleware(['auth:admin'])->get('/admin/download-database', [AdminController::class, 'downloadDatabase'])
     ->name('admin.download-database');
+
+
+
+Route::get('/otp/verify', [RegisteredUserController::class, 'showOTPVerification'])
+    ->name('otp.verify');
+
+Route::post('/otp/verify', [RegisteredUserController::class, 'verifyOTP'])
+    ->name('otp.verify.submit');
