@@ -149,19 +149,11 @@ Route::get('/login', function () {
     return Inertia::render('Auth/Login', [
         'recaptchaSiteKey' => env('RECAPTCHA_SITE_KEY')
     ]);
-});
-
-
-
-
-
-
+})->name('login');
 
 
 Route::middleware(['auth:admin'])->get('/admin/download-database', [AdminController::class, 'downloadDatabase'])
     ->name('admin.download-database');
-
-
 
 Route::get('/otp/verify', [RegisteredUserController::class, 'showOTPVerification'])
     ->name('otp.verify');

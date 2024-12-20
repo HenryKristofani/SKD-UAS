@@ -1,16 +1,16 @@
 <template>
-  <!-- <MainLayout> -->
+  <MainLayout>
     <Login />
-  <!-- </MainLayout> -->
+  </MainLayout>
 </template>
 
 <script>
-// import MainLayout from '../Layouts/MainLayout.vue';
+import MainLayout from '../Layouts/MainLayout.vue';
 import Login from '../Pages/UserAuthentication/Login.vue'; 
 
 export default {
   components: {
-    // MainLayout,
+    MainLayout,
     Login
   }
 };
